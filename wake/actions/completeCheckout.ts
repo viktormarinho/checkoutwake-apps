@@ -10,6 +10,8 @@ import type {
   CheckoutCompleteMutationVariables,
 } from "../utils/graphql/storefront.graphql.gen.ts";
 import { parseHeaders } from "../utils/parseHeaders.ts";
+import { badRequest } from "@deco/deco";
+import { WakeGraphqlError } from "../utils/error.ts";
 
 // https://wakecommerce.readme.io/docs/checkoutcomplete
 export default async function (props: Props, req: Request, ctx: AppContext) {
@@ -17,24 +19,45 @@ export default async function (props: Props, req: Request, ctx: AppContext) {
   const customerAccessToken = ensureCustomerToken(await authenticate(req, ctx));
   const checkoutId = ensureCheckout(getCartCookie(req.headers));
 
-  const { checkoutComplete } = await ctx.storefront.query<
-    CheckoutCompleteMutation,
-    CheckoutCompleteMutationVariables
-  >(
-    {
-      variables: {
-        paymentData: new URLSearchParams(props.paymentData).toString(),
-        comments: props.comments,
-        customerAccessToken,
-        checkoutId,
-      },
-      ...CheckoutComplete,
+  console.log({
+    variables: {
+      paymentData: new URLSearchParams(props.paymentData).toString(),
+      comments: props.comments,
+      customerAccessToken,
+      checkoutId,
     },
-    { headers },
-  );
+  })
 
-  deleteCookie(ctx.response.headers, CART_COOKIE, { path: "/" });
-  return checkoutComplete;
+  try {
+    const { checkoutComplete } = await ctx.storefront.query<
+      CheckoutCompleteMutation,
+      CheckoutCompleteMutationVariables
+    >(
+      {
+        variables: {
+          paymentData: new URLSearchParams(props.paymentData).toString(),
+          comments: props.comments,
+          customerAccessToken,
+          checkoutId,
+        },
+        ...CheckoutComplete,
+      },
+      { headers },
+    );
+  
+    deleteCookie(ctx.response.headers, CART_COOKIE, { path: "/" });
+    return checkoutComplete;
+  } catch (err) {
+    if (Array.isArray(err)) {
+      ctx.response.status = 400;
+      return err as WakeGraphqlError[];
+    }
+    
+    throw badRequest({
+      message: String(err),
+    });
+  }
+
 }
 
 interface Props {

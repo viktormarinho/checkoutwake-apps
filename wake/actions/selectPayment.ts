@@ -7,31 +7,44 @@ import type {
 } from "../utils/graphql/storefront.graphql.gen.ts";
 import { parseHeaders } from "../utils/parseHeaders.ts";
 import ensureCheckout from "../utils/ensureCheckout.ts";
+import { WakeGraphqlError } from "../utils/error.ts";
+import { badRequest } from "@deco/deco";
 
 // https://wakecommerce.readme.io/docs/checkoutselectpaymentmethod
 export default async function (
   props: Props,
   req: Request,
   ctx: AppContext,
-): Promise<CheckoutSelectPaymentMethodMutation["checkoutSelectPaymentMethod"]> {
+) {
   const headers = parseHeaders(req.headers);
-  const checkoutId = ensureCheckout(getCartCookie(req.headers));
+  try {
+    const checkoutId = ensureCheckout(getCartCookie(req.headers));
 
-  const { checkoutSelectPaymentMethod } = await ctx.storefront.query<
-    CheckoutSelectPaymentMethodMutation,
-    CheckoutSelectPaymentMethodMutationVariables
-  >(
-    {
-      variables: {
-        paymentMethodId: props.paymentMethodId,
-        checkoutId,
+    const { checkoutSelectPaymentMethod } = await ctx.storefront.query<
+      CheckoutSelectPaymentMethodMutation,
+      CheckoutSelectPaymentMethodMutationVariables
+    >(
+      {
+        variables: {
+          paymentMethodId: props.paymentMethodId,
+          checkoutId,
+        },
+        ...CheckoutSelectPaymentMethod,
       },
-      ...CheckoutSelectPaymentMethod,
-    },
-    { headers },
-  );
+      { headers },
+    );
 
-  return checkoutSelectPaymentMethod;
+    return checkoutSelectPaymentMethod as CheckoutSelectPaymentMethodMutation["checkoutSelectPaymentMethod"];
+  } catch (err) {
+    if (Array.isArray(err)) {
+      ctx.response.status = 400;
+      return err as WakeGraphqlError[];
+    }
+
+    throw badRequest({
+      message: String(err),
+    });
+  }
 }
 
 interface Props {

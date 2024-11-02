@@ -938,6 +938,8 @@ fragment SelectPayment on Checkout {
   subtotal
   selectedPaymentMethod {
     id
+    scripts
+    html
     installments {
       adjustment
       number
@@ -1662,7 +1664,7 @@ export const GetSelectedShipping = {
 };
 
 export const CheckoutComplete = {
-  fragments: [CheckoutCloseFields],
+  // fragments: [CheckoutCloseFields],
   query: gql`mutation checkoutComplete(
     $checkoutId: Uuid!
     $paymentData: String!

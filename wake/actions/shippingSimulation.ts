@@ -8,6 +8,8 @@ import { getCartCookie } from "../utils/cart.ts";
 import { HttpError } from "../../utils/http.ts";
 import { parseHeaders } from "../utils/parseHeaders.ts";
 import ensureCheckout from "../utils/ensureCheckout.ts";
+import { WakeGraphqlError } from "../utils/error.ts";
+import { badRequest } from "@deco/deco";
 
 export interface Props {
   cep?: string;
@@ -54,12 +56,14 @@ const action = async (
   props: Props,
   req: Request,
   ctx: AppContext,
-): Promise<ShippingQuotesQuery["shippingQuotes"]> => {
+) => {
   const { storefront } = ctx;
 
   const headers = parseHeaders(req.headers);
   const cartId = ensureCheckout(getCartCookie(req.headers));
   const simulationParams = buildSimulationParams(props, cartId);
+
+  try {
 
   const data = await storefront.query<
     ShippingQuotesQuery,
@@ -76,7 +80,17 @@ const action = async (
     },
   );
 
-  return data.shippingQuotes ?? [];
+  return (data.shippingQuotes ?? []) as ShippingQuotesQuery["shippingQuotes"];
+  } catch (err) {
+    if (Array.isArray(err)) {
+      ctx.response.status = 400;
+      return err as WakeGraphqlError[];
+    }
+    
+    throw badRequest({
+      message: String(err),
+    });
+  }
 };
 
 export default action;
