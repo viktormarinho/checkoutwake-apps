@@ -1,3 +1,4 @@
+import { badRequest } from "@deco/deco";
 import type { AppContext } from "../mod.ts";
 import { getCartCookie } from "../utils/cart.ts";
 import {
@@ -12,29 +13,40 @@ import type {
 } from "../utils/graphql/storefront.graphql.gen.ts";
 import { parseHeaders } from "../utils/parseHeaders.ts";
 import { setUserCookie } from "../utils/user.ts";
+import { WakeGraphqlError } from "../utils/error.ts";
 
 export default async function (
   props: Props,
   req: Request,
   { storefront, response, invoke }: AppContext,
-): Promise<CustomerAuthenticatedLoginMutation["customerAuthenticatedLogin"]> {
+) {
   const headers = parseHeaders(req.headers);
+  try {
+    const { customerAuthenticatedLogin } = await storefront.query<
+      CustomerAuthenticatedLoginMutation,
+      CustomerAuthenticatedLoginMutationVariables
+    >({ variables: props, ...CustomerAuthenticatedLogin }, { headers });
 
-  const { customerAuthenticatedLogin } = await storefront.query<
-    CustomerAuthenticatedLoginMutation,
-    CustomerAuthenticatedLoginMutationVariables
-  >({ variables: props, ...CustomerAuthenticatedLogin }, { headers });
+    if (customerAuthenticatedLogin) {
+      setUserCookie(
+        response.headers,
+        customerAuthenticatedLogin.token as string,
+        customerAuthenticatedLogin.legacyToken as string,
+        new Date(customerAuthenticatedLogin.validUntil),
+      );
+    }
 
-  if (customerAuthenticatedLogin) {
-    setUserCookie(
-      response.headers,
-      customerAuthenticatedLogin.token as string,
-      customerAuthenticatedLogin.legacyToken as string,
-      new Date(customerAuthenticatedLogin.validUntil),
-    );
+    return customerAuthenticatedLogin as CustomerAuthenticatedLoginMutation["customerAuthenticatedLogin"];
+  } catch (err) {
+    if (Array.isArray(err)) {
+      response.status = 400;
+      return err as WakeGraphqlError[];
+    }
+    
+    throw badRequest({
+      message: String(err),
+    });
   }
-
-  return customerAuthenticatedLogin;
 }
 
 export interface Props {
