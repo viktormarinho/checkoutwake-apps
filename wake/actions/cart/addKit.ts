@@ -1,6 +1,8 @@
+import { badRequest } from "@deco/deco";
 import { HttpError } from "../../../utils/http.ts";
 import { AppContext } from "../../mod.ts";
 import { getCartCookie, setCartCookie } from "../../utils/cart.ts";
+import { WakeGraphqlError } from "../../utils/error.ts";
 import { AddKit } from "../../utils/graphql/queries.ts";
 import {
   AddKitMutation,
@@ -29,31 +31,43 @@ const action = async (
   props: Props,
   req: Request,
   ctx: AppContext,
-): Promise<Partial<CheckoutFragment>> => {
-  const { storefront } = ctx;
-  const cartId = getCartCookie(req.headers);
-  const headers = parseHeaders(req.headers);
-  const { quantity, kitId, products } = props;
+): Promise<Partial<CheckoutFragment> | WakeGraphqlError[]> => {
+  try {
+    const { storefront } = ctx;
+    const cartId = getCartCookie(req.headers);
+    const headers = parseHeaders(req.headers);
+    const { quantity, kitId, products } = props;
 
-  if (!cartId) {
-    throw new HttpError(400, "Missing cart cookie");
+    if (!cartId) {
+      throw new HttpError(400, "Missing cart cookie");
+    }
+
+    const data = await storefront.query<
+      AddKitMutation,
+      AddKitMutationVariables
+    >({
+      variables: { input: { id: cartId, quantity, kitId, products } },
+      ...AddKit,
+    }, { headers });
+
+    const checkoutId = data.checkout?.checkoutId;
+
+    if (cartId !== checkoutId) {
+      setCartCookie(ctx.response.headers, checkoutId);
+    }
+
+    return data.checkout ?? {};
+  } catch (errors) {
+    if (Array.isArray(errors)) {
+      return errors as WakeGraphqlError[];
+    }
+
+    throw badRequest({
+      message: String(
+        typeof errors === "object" ? JSON.stringify(errors) : errors,
+      ),
+    });
   }
-
-  const data = await storefront.query<
-    AddKitMutation,
-    AddKitMutationVariables
-  >({
-    variables: { input: { id: cartId, quantity, kitId, products } },
-    ...AddKit,
-  }, { headers });
-
-  const checkoutId = data.checkout?.checkoutId;
-
-  if (cartId !== checkoutId) {
-    setCartCookie(ctx.response.headers, checkoutId);
-  }
-
-  return data.checkout ?? {};
 };
 
 export default action;
