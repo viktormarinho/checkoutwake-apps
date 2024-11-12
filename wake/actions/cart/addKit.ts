@@ -25,6 +25,7 @@ export interface Props {
   products: KitItem[];
   quantity: number;
   kitId: number;
+  kitGroupId?: string;
 }
 
 const action = async (
@@ -36,7 +37,7 @@ const action = async (
     const { storefront } = ctx;
     const cartId = getCartCookie(req.headers);
     const headers = parseHeaders(req.headers);
-    const { quantity, kitId, products } = props;
+    const { quantity, kitId, products, kitGroupId } = props;
 
     if (!cartId) {
       throw new HttpError(400, "Missing cart cookie");
@@ -46,7 +47,7 @@ const action = async (
       AddKitMutation,
       AddKitMutationVariables
     >({
-      variables: { input: { id: cartId, quantity, kitId, products } },
+      variables: { input: { id: cartId, quantity, kitId, products, kitGroupId } },
       ...AddKit,
     }, { headers });
 
