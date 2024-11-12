@@ -56,7 +56,7 @@ const action = async (
 
   const cart = await ctx.invoke.wake.loaders.cart({}, req);
   const item = cart.products?.find((item) =>
-    item?.productVariantId === props.productVariantId
+    item?.productVariantId === props.productVariantId && !item.kit
   );
   const quantityItem = item?.quantity ?? 0;
   const quantity = props.quantity - quantityItem;
