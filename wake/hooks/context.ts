@@ -2,7 +2,6 @@ import { IS_BROWSER } from "$fresh/runtime.ts";
 import { signal } from "@preact/signals";
 import type { Person } from "../../commerce/types.ts";
 import { invoke } from "../runtime.ts";
-import { setClientCookie } from "../utils/cart.ts";
 import type {
   CheckoutFragment,
   ShopQuery,
