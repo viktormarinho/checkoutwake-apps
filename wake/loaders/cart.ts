@@ -12,7 +12,7 @@ import type {
 import { parseHeaders } from "../utils/parseHeaders.ts";
 
 /**
- * @title VNDA Integration
+ * @title Wake Integration
  * @description Cart loader
  */
 const loader = async (

@@ -34,7 +34,9 @@ export default async function (
       { headers },
     );
 
-    return checkoutSelectPaymentMethod as CheckoutSelectPaymentMethodMutation["checkoutSelectPaymentMethod"];
+    return checkoutSelectPaymentMethod as CheckoutSelectPaymentMethodMutation[
+      "checkoutSelectPaymentMethod"
+    ];
   } catch (err) {
     if (Array.isArray(err)) {
       ctx.response.status = 400;

@@ -64,29 +64,28 @@ const action = async (
   const simulationParams = buildSimulationParams(props, cartId);
 
   try {
-
-  const data = await storefront.query<
-    ShippingQuotesQuery,
-    ShippingQuotesQueryVariables
-  >(
-    {
-      variables: {
-        ...simulationParams,
+    const data = await storefront.query<
+      ShippingQuotesQuery,
+      ShippingQuotesQueryVariables
+    >(
+      {
+        variables: {
+          ...simulationParams,
+        },
+        ...ShippingQuotes,
       },
-      ...ShippingQuotes,
-    },
-    {
-      headers,
-    },
-  );
+      {
+        headers,
+      },
+    );
 
-  return (data.shippingQuotes ?? []) as ShippingQuotesQuery["shippingQuotes"];
+    return (data.shippingQuotes ?? []) as ShippingQuotesQuery["shippingQuotes"];
   } catch (err) {
     if (Array.isArray(err)) {
       ctx.response.status = 400;
       return err as WakeGraphqlError[];
     }
-    
+
     throw badRequest({
       message: String(err),
     });

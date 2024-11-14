@@ -61,7 +61,7 @@ const action = async (
   const quantityItem = item?.quantity ?? 0;
   const quantity = props.quantity - quantityItem;
 
-  console.log('LOG:','quantity', quantity);
+  console.log("LOG:", "quantity", quantity);
 
   let checkout: Partial<CheckoutFragment> | null = null;
 

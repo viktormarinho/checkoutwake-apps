@@ -10,6 +10,7 @@ import {
 } from "../utils/graphql/storefront.graphql.gen.ts";
 import { GetBuyList, GetProduct } from "../utils/graphql/queries.ts";
 import { parseHeaders } from "../utils/parseHeaders.ts";
+import { getPartnerCookie } from "../utils/partner.ts";
 import { parseSlug, toBreadcrumbList, toProduct } from "../utils/transform.ts";
 
 export interface Props {
@@ -31,7 +32,11 @@ async function loader(
   const { slug, buyTogether, includeSameParent } = props;
   const { storefront } = ctx;
 
+  const partnerAccessToken = getPartnerCookie(req.headers);
+
   const headers = parseHeaders(req.headers);
+
+  console.log({ partnerAccessToken });
 
   if (!slug) return null;
 
@@ -46,7 +51,7 @@ async function loader(
     BuyListQuery,
     BuyListQueryVariables
   >({
-    variables: { id: productId },
+    variables: { id: productId, partnerAccessToken },
     ...GetBuyList,
   }, {
     headers,
@@ -86,7 +91,11 @@ async function loader(
     GetProductQuery,
     GetProductQueryVariables
   >({
-    variables: { productId, includeParentIdVariants: includeSameParent },
+    variables: {
+      productId,
+      includeParentIdVariants: includeSameParent,
+      partnerAccessToken,
+    },
     ...GetProduct,
   }, {
     headers,
@@ -124,16 +133,16 @@ async function loader(
   const buyListSimilarProducts = wakeProductOrBuyList.similarProducts?.length
     ? await ctx.invoke.wake.loaders.productList({
       first: wakeProductOrBuyList.similarProducts.length,
-      sortDirection: 'ASC',
+      sortDirection: "ASC",
       filters: {
         productId: wakeProductOrBuyList.similarProducts?.map(
-          (sp) => Number(sp!.alias?.split('-').at(-1))
+          (sp) => Number(sp!.alias?.split("-").at(-1)),
         ),
-        mainVariant: true
+        mainVariant: true,
       },
-      getVariations: true
+      getVariations: true,
     })
-    : null
+    : null;
 
   const product = toProduct(
     wakeProductOrBuyList,
@@ -157,7 +166,7 @@ async function loader(
           };
         },
       ) ?? [],
-      isSimilarTo: buyListSimilarProducts ?? product.isSimilarTo
+      isSimilarTo: buyListSimilarProducts ?? product.isSimilarTo,
     },
     seo: {
       canonical: product.isVariantOf?.url ?? "",

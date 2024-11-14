@@ -7,37 +7,39 @@ import * as $$$$$$$$$1 from "./actions/cart/addCoupon.ts";
 import * as $$$$$$$$$2 from "./actions/cart/addItem.ts";
 import * as $$$$$$$$$3 from "./actions/cart/addItems.ts";
 import * as $$$$$$$$$4 from "./actions/cart/addKit.ts";
-import * as $$$$$$$$$5 from "./actions/cart/partnerAssociate.ts";
-import * as $$$$$$$$$6 from "./actions/cart/partnerDisassociate.ts";
-import * as $$$$$$$$$7 from "./actions/cart/removeCoupon.ts";
-import * as $$$$$$$$$8 from "./actions/cart/removeKit.ts";
-import * as $$$$$$$$$9 from "./actions/cart/updateItemQuantity.ts";
-import * as $$$$$$$$$10 from "./actions/cloneCheckout.ts";
-import * as $$$$$$$$$11 from "./actions/completeCheckout.ts";
-import * as $$$$$$$$$12 from "./actions/createAddress.ts";
-import * as $$$$$$$$$13 from "./actions/createCheckout.ts";
-import * as $$$$$$$$$14 from "./actions/deleteAddress.ts";
-import * as $$$$$$$$$15 from "./actions/deleteCartCookie.ts";
-import * as $$$$$$$$$16 from "./actions/login.ts";
-import * as $$$$$$$$$17 from "./actions/loginGoogle.ts";
-import * as $$$$$$$$$18 from "./actions/logout.ts";
-import * as $$$$$$$$$19 from "./actions/newsletter/register.ts";
-import * as $$$$$$$$$20 from "./actions/notifyme.ts";
-import * as $$$$$$$$$21 from "./actions/recoveryPassword.ts";
-import * as $$$$$$$$$22 from "./actions/review/create.ts";
-import * as $$$$$$$$$23 from "./actions/selectAddress.ts";
-import * as $$$$$$$$$24 from "./actions/selectInstallment.ts";
-import * as $$$$$$$$$25 from "./actions/selectPayment.ts";
-import * as $$$$$$$$$26 from "./actions/selectShipping.ts";
-import * as $$$$$$$$$27 from "./actions/shippingSimulation.ts";
-import * as $$$$$$$$$28 from "./actions/signupCompany.ts";
-import * as $$$$$$$$$29 from "./actions/signupPartialCompany.ts";
-import * as $$$$$$$$$30 from "./actions/signupPartialPerson.ts";
-import * as $$$$$$$$$31 from "./actions/signupPerson.ts";
-import * as $$$$$$$$$32 from "./actions/submmitForm.ts";
-import * as $$$$$$$$$33 from "./actions/updateAddress.ts";
-import * as $$$$$$$$$34 from "./actions/wishlist/addProduct.ts";
-import * as $$$$$$$$$35 from "./actions/wishlist/removeProduct.ts";
+import * as $$$$$$$$$5 from "./actions/cart/addMetadata.ts";
+import * as $$$$$$$$$6 from "./actions/cart/partnerAssociate.ts";
+import * as $$$$$$$$$7 from "./actions/cart/partnerDisassociate.ts";
+import * as $$$$$$$$$8 from "./actions/cart/removeCoupon.ts";
+import * as $$$$$$$$$9 from "./actions/cart/removeKit.ts";
+import * as $$$$$$$$$10 from "./actions/cart/removeMetadata.ts";
+import * as $$$$$$$$$11 from "./actions/cart/updateItemQuantity.ts";
+import * as $$$$$$$$$12 from "./actions/cloneCheckout.ts";
+import * as $$$$$$$$$13 from "./actions/completeCheckout.ts";
+import * as $$$$$$$$$14 from "./actions/createAddress.ts";
+import * as $$$$$$$$$15 from "./actions/createCheckout.ts";
+import * as $$$$$$$$$16 from "./actions/deleteAddress.ts";
+import * as $$$$$$$$$17 from "./actions/deleteCartCookie.ts";
+import * as $$$$$$$$$18 from "./actions/login.ts";
+import * as $$$$$$$$$19 from "./actions/loginGoogle.ts";
+import * as $$$$$$$$$20 from "./actions/logout.ts";
+import * as $$$$$$$$$21 from "./actions/newsletter/register.ts";
+import * as $$$$$$$$$22 from "./actions/notifyme.ts";
+import * as $$$$$$$$$23 from "./actions/recoveryPassword.ts";
+import * as $$$$$$$$$24 from "./actions/review/create.ts";
+import * as $$$$$$$$$25 from "./actions/selectAddress.ts";
+import * as $$$$$$$$$26 from "./actions/selectInstallment.ts";
+import * as $$$$$$$$$27 from "./actions/selectPayment.ts";
+import * as $$$$$$$$$28 from "./actions/selectShipping.ts";
+import * as $$$$$$$$$29 from "./actions/shippingSimulation.ts";
+import * as $$$$$$$$$30 from "./actions/signupCompany.ts";
+import * as $$$$$$$$$31 from "./actions/signupPartialCompany.ts";
+import * as $$$$$$$$$32 from "./actions/signupPartialPerson.ts";
+import * as $$$$$$$$$33 from "./actions/signupPerson.ts";
+import * as $$$$$$$$$34 from "./actions/submmitForm.ts";
+import * as $$$$$$$$$35 from "./actions/updateAddress.ts";
+import * as $$$$$$$$$36 from "./actions/wishlist/addProduct.ts";
+import * as $$$$$$$$$37 from "./actions/wishlist/removeProduct.ts";
 import * as $$$$0 from "./handlers/sitemap.ts";
 import * as $$$0 from "./loaders/calculatePrices.ts";
 import * as $$$1 from "./loaders/cart.ts";
@@ -86,37 +88,39 @@ const manifest = {
     "wake/actions/cart/addItem.ts": $$$$$$$$$2,
     "wake/actions/cart/addItems.ts": $$$$$$$$$3,
     "wake/actions/cart/addKit.ts": $$$$$$$$$4,
-    "wake/actions/cart/partnerAssociate.ts": $$$$$$$$$5,
-    "wake/actions/cart/partnerDisassociate.ts": $$$$$$$$$6,
-    "wake/actions/cart/removeCoupon.ts": $$$$$$$$$7,
-    "wake/actions/cart/removeKit.ts": $$$$$$$$$8,
-    "wake/actions/cart/updateItemQuantity.ts": $$$$$$$$$9,
-    "wake/actions/cloneCheckout.ts": $$$$$$$$$10,
-    "wake/actions/completeCheckout.ts": $$$$$$$$$11,
-    "wake/actions/createAddress.ts": $$$$$$$$$12,
-    "wake/actions/createCheckout.ts": $$$$$$$$$13,
-    "wake/actions/deleteAddress.ts": $$$$$$$$$14,
-    "wake/actions/deleteCartCookie.ts": $$$$$$$$$15,
-    "wake/actions/login.ts": $$$$$$$$$16,
-    "wake/actions/loginGoogle.ts": $$$$$$$$$17,
-    "wake/actions/logout.ts": $$$$$$$$$18,
-    "wake/actions/newsletter/register.ts": $$$$$$$$$19,
-    "wake/actions/notifyme.ts": $$$$$$$$$20,
-    "wake/actions/recoveryPassword.ts": $$$$$$$$$21,
-    "wake/actions/review/create.ts": $$$$$$$$$22,
-    "wake/actions/selectAddress.ts": $$$$$$$$$23,
-    "wake/actions/selectInstallment.ts": $$$$$$$$$24,
-    "wake/actions/selectPayment.ts": $$$$$$$$$25,
-    "wake/actions/selectShipping.ts": $$$$$$$$$26,
-    "wake/actions/shippingSimulation.ts": $$$$$$$$$27,
-    "wake/actions/signupCompany.ts": $$$$$$$$$28,
-    "wake/actions/signupPartialCompany.ts": $$$$$$$$$29,
-    "wake/actions/signupPartialPerson.ts": $$$$$$$$$30,
-    "wake/actions/signupPerson.ts": $$$$$$$$$31,
-    "wake/actions/submmitForm.ts": $$$$$$$$$32,
-    "wake/actions/updateAddress.ts": $$$$$$$$$33,
-    "wake/actions/wishlist/addProduct.ts": $$$$$$$$$34,
-    "wake/actions/wishlist/removeProduct.ts": $$$$$$$$$35,
+    "wake/actions/cart/addMetadata.ts": $$$$$$$$$5,
+    "wake/actions/cart/partnerAssociate.ts": $$$$$$$$$6,
+    "wake/actions/cart/partnerDisassociate.ts": $$$$$$$$$7,
+    "wake/actions/cart/removeCoupon.ts": $$$$$$$$$8,
+    "wake/actions/cart/removeKit.ts": $$$$$$$$$9,
+    "wake/actions/cart/removeMetadata.ts": $$$$$$$$$10,
+    "wake/actions/cart/updateItemQuantity.ts": $$$$$$$$$11,
+    "wake/actions/cloneCheckout.ts": $$$$$$$$$12,
+    "wake/actions/completeCheckout.ts": $$$$$$$$$13,
+    "wake/actions/createAddress.ts": $$$$$$$$$14,
+    "wake/actions/createCheckout.ts": $$$$$$$$$15,
+    "wake/actions/deleteAddress.ts": $$$$$$$$$16,
+    "wake/actions/deleteCartCookie.ts": $$$$$$$$$17,
+    "wake/actions/login.ts": $$$$$$$$$18,
+    "wake/actions/loginGoogle.ts": $$$$$$$$$19,
+    "wake/actions/logout.ts": $$$$$$$$$20,
+    "wake/actions/newsletter/register.ts": $$$$$$$$$21,
+    "wake/actions/notifyme.ts": $$$$$$$$$22,
+    "wake/actions/recoveryPassword.ts": $$$$$$$$$23,
+    "wake/actions/review/create.ts": $$$$$$$$$24,
+    "wake/actions/selectAddress.ts": $$$$$$$$$25,
+    "wake/actions/selectInstallment.ts": $$$$$$$$$26,
+    "wake/actions/selectPayment.ts": $$$$$$$$$27,
+    "wake/actions/selectShipping.ts": $$$$$$$$$28,
+    "wake/actions/shippingSimulation.ts": $$$$$$$$$29,
+    "wake/actions/signupCompany.ts": $$$$$$$$$30,
+    "wake/actions/signupPartialCompany.ts": $$$$$$$$$31,
+    "wake/actions/signupPartialPerson.ts": $$$$$$$$$32,
+    "wake/actions/signupPerson.ts": $$$$$$$$$33,
+    "wake/actions/submmitForm.ts": $$$$$$$$$34,
+    "wake/actions/updateAddress.ts": $$$$$$$$$35,
+    "wake/actions/wishlist/addProduct.ts": $$$$$$$$$36,
+    "wake/actions/wishlist/removeProduct.ts": $$$$$$$$$37,
   },
   "name": "wake",
   "baseUrl": import.meta.url,

@@ -26,7 +26,7 @@ export default async function (props: Props, req: Request, ctx: AppContext) {
       customerAccessToken,
       checkoutId,
     },
-  })
+  });
 
   try {
     const { checkoutComplete } = await ctx.storefront.query<
@@ -44,7 +44,7 @@ export default async function (props: Props, req: Request, ctx: AppContext) {
       },
       { headers },
     );
-  
+
     deleteCookie(ctx.response.headers, CART_COOKIE, { path: "/" });
     return checkoutComplete;
   } catch (err) {
@@ -52,12 +52,11 @@ export default async function (props: Props, req: Request, ctx: AppContext) {
       ctx.response.status = 400;
       return err as WakeGraphqlError[];
     }
-    
+
     throw badRequest({
       message: String(err),
     });
   }
-
 }
 
 interface Props {

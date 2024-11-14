@@ -8,6 +8,7 @@ import type {
   ProductFragment,
 } from "../utils/graphql/storefront.graphql.gen.ts";
 import { parseHeaders } from "../utils/parseHeaders.ts";
+import { getPartnerCookie } from "../utils/partner.ts";
 import { toProduct } from "../utils/transform.ts";
 
 export interface StockFilter {
@@ -141,6 +142,7 @@ const productListLoader = async (
 ): Promise<Product[] | null> => {
   const url = new URL(req.url);
   const { storefront } = ctx;
+  const partnerAccessToken = getPartnerCookie(req.headers);
 
   console.log(props.filters);
   console.log(props.filters);
@@ -155,7 +157,7 @@ const productListLoader = async (
     GetProductsQuery,
     GetProductsQueryVariables
   >({
-    variables: props,
+    variables: { ...props, partnerAccessToken },
     ...GetProducts,
   }, {
     headers,

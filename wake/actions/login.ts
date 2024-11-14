@@ -36,13 +36,15 @@ export default async function (
       );
     }
 
-    return customerAuthenticatedLogin as CustomerAuthenticatedLoginMutation["customerAuthenticatedLogin"];
+    return customerAuthenticatedLogin as CustomerAuthenticatedLoginMutation[
+      "customerAuthenticatedLogin"
+    ];
   } catch (err) {
     if (Array.isArray(err)) {
       response.status = 400;
       return err as WakeGraphqlError[];
     }
-    
+
     throw badRequest({
       message: String(err),
     });

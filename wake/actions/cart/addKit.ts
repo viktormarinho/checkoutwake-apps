@@ -47,7 +47,9 @@ const action = async (
       AddKitMutation,
       AddKitMutationVariables
     >({
-      variables: { input: { id: cartId, quantity, kitId, products, kitGroupId } },
+      variables: {
+        input: { id: cartId, quantity, kitId, products, kitGroupId },
+      },
       ...AddKit,
     }, { headers });
 

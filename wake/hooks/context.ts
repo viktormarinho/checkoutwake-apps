@@ -8,6 +8,10 @@ import type {
   ShopQuery,
   WishlistReducedProductFragment,
 } from "../utils/graphql/storefront.graphql.gen.ts";
+import { Person } from "../../commerce/types.ts";
+import { setClientCookie } from "../utils/cart.ts";
+import { ShopQuery } from "../utils/graphql/storefront.graphql.gen.ts";
+import { getUTMMetadata } from "../utils/getUTMMetadata.ts";
 
 export interface Context {
   cart: Partial<CheckoutFragment>;
@@ -143,6 +147,11 @@ if (IS_BROWSER) {
     "visibilitychange",
     () => document.visibilityState === "visible" && enqueue(load),
   );
+
+  const metadata = getUTMMetadata(globalThis.location.search);
+  if (metadata) {
+    await invoke.wake.actions.cart.addMetadata({ metadata });
+  }
 }
 
 export const state = {
