@@ -147,11 +147,13 @@ if (IS_BROWSER) {
 
   const metadata = getUTMMetadata(globalThis.location.search);
 
-  if (metadata) {
+  if (metadata.length) {
     try {
-      await invoke.wake.actions.cart.removeMetadata({ keys: metadata.map(meta => meta.key) });
+      await invoke.wake.actions.cart.removeMetadata({
+        keys: metadata.map((meta) => meta.key),
+      });
     } catch {}
-    
+
     await invoke.wake.actions.cart.addMetadata({ metadata });
   }
 }
