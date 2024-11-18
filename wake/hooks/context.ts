@@ -32,7 +32,7 @@ let abort2 = () => {};
 let queue = Promise.resolve();
 let abort = () => {};
 const enqueue = (
-  cb: (signal: AbortSignal) => Promise<Partial<Context>> | Partial<Context>,
+  cb: (signal: AbortSignal) => Promise<Partial<Context>> | Partial<Context>
 ) => {
   abort();
 
@@ -67,10 +67,10 @@ const enqueue = (
 
 const enqueue2 = (
   cb: (
-    signal: AbortSignal,
+    signal: AbortSignal
   ) =>
     | Promise<{ shop: ShopQuery["shop"] }>
-    | Partial<{ shop: ShopQuery["shop"] }>,
+    | Partial<{ shop: ShopQuery["shop"] }>
 ) => {
   abort2();
 
@@ -123,7 +123,7 @@ const load2 = (signal: AbortSignal) =>
     {
       shop: invoke.wake.loaders.shop(),
     },
-    { signal },
+    { signal }
   );
 
 const load = (signal: AbortSignal) =>
@@ -133,7 +133,7 @@ const load = (signal: AbortSignal) =>
       user: invoke.wake.loaders.user(),
       wishlist: invoke.wake.loaders.wishlist(),
     },
-    { signal },
+    { signal }
   );
 
 if (IS_BROWSER) {
@@ -142,22 +142,27 @@ if (IS_BROWSER) {
 
   document.addEventListener(
     "visibilitychange",
-    () => document.visibilityState === "visible" && enqueue(load),
+    () => document.visibilityState === "visible" && enqueue(load)
   );
 
-  const metadata = getUTMMetadata(globalThis.location.search);
+  const setMetaData = async () => {
+    const metadata = getUTMMetadata(globalThis.location.search);
 
-  setTimeout( async () => {
-    if (metadata.length) {
-      try {
-        await invoke.wake.actions.cart.removeMetadata({
-          keys: metadata.map((meta) => meta.key),
-        });
-      } catch {}
-  
-      await invoke.wake.actions.cart.addMetadata({ metadata });
+    try {
+      await invoke.wake.actions.cart.removeMetadata({
+        keys: metadata.map((meta) => meta.key),
+      });
+
+    } catch (error) {
+      console.log('LOG:','error', error);
     }
-  }, 500)
+
+    await invoke.wake.actions.cart.addMetadata({ metadata });
+  } 
+  
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(setMetaData, 2000)
+  })
 }
 
 export const state = {
