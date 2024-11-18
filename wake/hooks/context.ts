@@ -147,15 +147,17 @@ if (IS_BROWSER) {
 
   const metadata = getUTMMetadata(globalThis.location.search);
 
-  if (metadata.length) {
-    try {
-      await invoke.wake.actions.cart.removeMetadata({
-        keys: metadata.map((meta) => meta.key),
-      });
-    } catch {}
-
-    await invoke.wake.actions.cart.addMetadata({ metadata });
-  }
+  setTimeout( async () => {
+    if (metadata.length) {
+      try {
+        await invoke.wake.actions.cart.removeMetadata({
+          keys: metadata.map((meta) => meta.key),
+        });
+      } catch {}
+  
+      await invoke.wake.actions.cart.addMetadata({ metadata });
+    }
+  }, 500)
 }
 
 export const state = {
