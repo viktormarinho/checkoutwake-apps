@@ -32,7 +32,7 @@ let abort2 = () => {};
 let queue = Promise.resolve();
 let abort = () => {};
 const enqueue = (
-  cb: (signal: AbortSignal) => Promise<Partial<Context>> | Partial<Context>
+  cb: (signal: AbortSignal) => Promise<Partial<Context>> | Partial<Context>,
 ) => {
   abort();
 
@@ -52,6 +52,7 @@ const enqueue = (
       context.wishlist.value = wishlist || context.wishlist.value;
 
       loading.value = false;
+      setMetaData();
     } catch (error) {
       if (error.name === "AbortError") return;
 
@@ -67,10 +68,10 @@ const enqueue = (
 
 const enqueue2 = (
   cb: (
-    signal: AbortSignal
+    signal: AbortSignal,
   ) =>
     | Promise<{ shop: ShopQuery["shop"] }>
-    | Partial<{ shop: ShopQuery["shop"] }>
+    | Partial<{ shop: ShopQuery["shop"] }>,
 ) => {
   abort2();
 
@@ -123,7 +124,7 @@ const load2 = (signal: AbortSignal) =>
     {
       shop: invoke.wake.loaders.shop(),
     },
-    { signal }
+    { signal },
   );
 
 const load = (signal: AbortSignal) =>
@@ -133,8 +134,22 @@ const load = (signal: AbortSignal) =>
       user: invoke.wake.loaders.user(),
       wishlist: invoke.wake.loaders.wishlist(),
     },
-    { signal }
+    { signal },
   );
+
+async function setMetaData() {
+  const metadata = getUTMMetadata(globalThis.location.search);
+
+  try {
+    await invoke.wake.actions.cart.removeMetadata({
+      keys: metadata.map((meta) => meta.key),
+    });
+  } catch (error) {
+    console.log("LOG:", "error", error);
+  }
+
+  await invoke.wake.actions.cart.addMetadata({ metadata });
+}
 
 if (IS_BROWSER) {
   enqueue2(load2);
@@ -142,27 +157,8 @@ if (IS_BROWSER) {
 
   document.addEventListener(
     "visibilitychange",
-    () => document.visibilityState === "visible" && enqueue(load)
+    () => document.visibilityState === "visible" && enqueue(load),
   );
-
-  const setMetaData = async () => {
-    const metadata = getUTMMetadata(globalThis.location.search);
-
-    try {
-      await invoke.wake.actions.cart.removeMetadata({
-        keys: metadata.map((meta) => meta.key),
-      });
-
-    } catch (error) {
-      console.log('LOG:','error', error);
-    }
-
-    await invoke.wake.actions.cart.addMetadata({ metadata });
-  } 
-  
-  document.addEventListener('DOMContentLoaded', () => {
-    setTimeout(setMetaData, 2000)
-  })
 }
 
 export const state = {
