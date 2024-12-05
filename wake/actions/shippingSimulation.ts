@@ -43,7 +43,7 @@ export const buildSimulationParams = (
     useSelectedAddress,
   };
 
-  if (products) {
+  if (products?.length) {
     return {
       ...defaultQueryParams,
       products,

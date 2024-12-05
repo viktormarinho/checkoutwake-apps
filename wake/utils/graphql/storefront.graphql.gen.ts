@@ -5149,6 +5149,7 @@ export type ShippingQuotesQueryVariables = Exact<{
   productVariantId?: InputMaybe<Scalars['Long']['input']>;
   quantity?: InputMaybe<Scalars['Int']['input']>;
   useSelectedAddress?: InputMaybe<Scalars['Boolean']['input']>;
+  products?: InputMaybe<Array<InputMaybe<ProductsInput>> | InputMaybe<ProductsInput>>;
 }>;
 
 

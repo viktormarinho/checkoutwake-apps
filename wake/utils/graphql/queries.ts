@@ -1331,9 +1331,10 @@ export const ProductRecommendations = {
 export const ShippingQuotes = {
   fragments: [ShippingQuote],
   query:
-    gql`query ShippingQuotes($cep: CEP,$checkoutId: Uuid, $productVariantId: Long,$quantity: Int = 1, $useSelectedAddress: Boolean, $products: [ProductInput]){
-    shippingQuotes(cep: $cep,checkoutId: $checkoutId,productVariantId: $productVariantId,quantity: $quantity, useSelectedAddress: $useSelectedAddress, products: $products){
+    gql`query ShippingQuotes($cep: CEP,$checkoutId: Uuid, $productVariantId: Long,$quantity: Int = 1, $useSelectedAddress: Boolean, $products: [productsInput]){
+    shippingQuotes(cep: $cep,checkoutId: $checkoutId, productVariantId: $productVariantId, quantity: $quantity, useSelectedAddress: $useSelectedAddress, products: $products){
       ...ShippingQuote
+    }
     }
   `,
 };
