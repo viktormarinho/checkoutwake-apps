@@ -8,12 +8,18 @@ import { getCartCookie } from "../utils/cart.ts";
 import { HttpError } from "../../utils/http.ts";
 import { parseHeaders } from "../utils/parseHeaders.ts";
 
+interface ProductItem {
+  productVariantId: number;
+  quantity: number;
+}
+
 export interface Props {
   cep?: string;
   simulateCartItems?: boolean;
   productVariantId?: number;
   quantity?: number;
   useSelectedAddress?: boolean;
+  products?: ProductItem[];
 }
 
 const buildSimulationParams = (
@@ -26,12 +32,20 @@ const buildSimulationParams = (
     productVariantId,
     quantity,
     useSelectedAddress,
+    products
   } = props;
 
   const defaultQueryParams = {
     cep,
     useSelectedAddress,
   };
+
+  if (products) {
+    return {
+      ...defaultQueryParams,
+      products,
+    };
+  }
 
   if (simulateCartItems) {
     if (!checkoutId) throw new HttpError(400, "Missing cart cookie");
