@@ -1,14 +1,14 @@
 import type { Product, ProductDetailsPage } from "../../commerce/types.ts";
 import type { RequestURLParam } from "../../website/functions/requestToParam.ts";
-import { AppContext } from "../mod.ts";
+import type { AppContext } from "../mod.ts";
 import { MAXIMUM_REQUEST_QUANTITY } from "../utils/getVariations.ts";
-import { GetBuyList, GetProduct } from "../utils/graphql/queries.ts";
 import {
   BuyListQuery,
   BuyListQueryVariables,
   GetProductQuery,
   GetProductQueryVariables,
 } from "../utils/graphql/storefront.graphql.gen.ts";
+import { GetBuyList, GetProduct } from "../utils/graphql/queries.ts";
 import { parseHeaders } from "../utils/parseHeaders.ts";
 import { getPartnerCookie } from "../utils/partner.ts";
 import { parseSlug, toBreadcrumbList, toProduct } from "../utils/transform.ts";
@@ -130,6 +130,20 @@ async function loader(
       }) ?? []
       : [];
 
+  const buyListSimilarProducts = wakeProductOrBuyList.similarProducts?.length
+    ? await ctx.invoke.wake.loaders.productList({
+      first: wakeProductOrBuyList.similarProducts.length,
+      sortDirection: "ASC",
+      filters: {
+        productId: wakeProductOrBuyList.similarProducts?.map(
+          (sp) => Number(sp!.alias?.split("-").at(-1)),
+        ),
+        mainVariant: true,
+      },
+      getVariations: true,
+    })
+    : null;
+
   const product = toProduct(
     wakeProductOrBuyList,
     { base: url },
@@ -152,6 +166,7 @@ async function loader(
           };
         },
       ) ?? [],
+      isSimilarTo: buyListSimilarProducts ?? product.isSimilarTo,
     },
     seo: {
       canonical: product.isVariantOf?.url ?? "",

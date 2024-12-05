@@ -1,25 +1,27 @@
 import { IS_BROWSER } from "$fresh/runtime.ts";
 import { signal } from "@preact/signals";
+import type { Person } from "../../commerce/types.ts";
 import { invoke } from "../runtime.ts";
 import type {
   CheckoutFragment,
+  ShopQuery,
   WishlistReducedProductFragment,
 } from "../utils/graphql/storefront.graphql.gen.ts";
-import { Person } from "../../commerce/types.ts";
 import { setClientCookie } from "../utils/cart.ts";
-import { ShopQuery } from "../utils/graphql/storefront.graphql.gen.ts";
 import { getUTMMetadata } from "../utils/getUTMMetadata.ts";
 
 export interface Context {
   cart: Partial<CheckoutFragment>;
-  user: Person | null;
+  user: (Person & { cpf: string | null }) | null;
   wishlist: WishlistReducedProductFragment[] | null;
 }
 
 const loading = signal<boolean>(true);
 const context = {
   cart: signal<Partial<CheckoutFragment>>({}),
-  user: signal<Person | null>(null),
+  user: signal<
+    (Person & { cpf: string | null; phoneNumber: string | null }) | null
+  >(null),
   wishlist: signal<WishlistReducedProductFragment[] | null>(null),
   shop: signal<ShopQuery["shop"] | null>(null),
 };
@@ -50,6 +52,7 @@ const enqueue = (
       context.wishlist.value = wishlist || context.wishlist.value;
 
       loading.value = false;
+      setMetaData();
     } catch (error) {
       if (error.name === "AbortError") return;
 
@@ -78,15 +81,15 @@ const enqueue2 = (
   queue2 = queue2.then(async () => {
     try {
       const { shop } = await cb(controller.signal);
+      const headlessCheckout = await invoke.wake.loaders.headlessCheckout();
+      const isLocalhost = window.location.hostname === "localhost";
 
       if (!shop || !shop?.checkoutUrl) {
         console.error("Erro on get shop checkoutUrl");
         return;
       }
 
-      const isLocalhost = window.location.hostname === "localhost";
-
-      if (!isLocalhost) {
+      if (!isLocalhost && !headlessCheckout) {
         const url = new URL("/api/carrinho", shop.checkoutUrl);
 
         const { Id } = await fetch(url, { credentials: "include" }).then((r) =>
@@ -117,16 +120,36 @@ const enqueue2 = (
 };
 
 const load2 = (signal: AbortSignal) =>
-  invoke({
-    shop: invoke.wake.loaders.shop(),
-  }, { signal });
+  invoke(
+    {
+      shop: invoke.wake.loaders.shop(),
+    },
+    { signal },
+  );
 
 const load = (signal: AbortSignal) =>
-  invoke({
-    cart: invoke.wake.loaders.cart(),
-    user: invoke.wake.loaders.user(),
-    wishlist: invoke.wake.loaders.wishlist(),
-  }, { signal });
+  invoke(
+    {
+      cart: invoke.wake.loaders.cart(),
+      user: invoke.wake.loaders.user(),
+      wishlist: invoke.wake.loaders.wishlist(),
+    },
+    { signal },
+  );
+
+async function setMetaData() {
+  const metadata = getUTMMetadata(globalThis.location.search);
+
+  try {
+    await invoke.wake.actions.cart.removeMetadata({
+      keys: metadata.map((meta) => meta.key),
+    });
+  } catch (error) {
+    console.log("LOG:", "error", error);
+  }
+
+  await invoke.wake.actions.cart.addMetadata({ metadata });
+}
 
 if (IS_BROWSER) {
   enqueue2(load2);
@@ -136,11 +159,6 @@ if (IS_BROWSER) {
     "visibilitychange",
     () => document.visibilityState === "visible" && enqueue(load),
   );
-
-  const metadata = getUTMMetadata(globalThis.location.search);
-  if (metadata) {
-    await invoke.wake.actions.cart.addMetadata({ metadata });
-  }
 }
 
 export const state = {
