@@ -151,6 +151,8 @@ const searchLoader = async (
 
   const partnerAccessTokenCookie = getPartnerCookie(req.headers);
 
+  const pageOffset = props.pageOffset ?? 0;
+
   const headers = parseHeaders(req.headers);
 
   const limit = Number(url.searchParams.get("tamanho") ?? props.limit ?? 12);
@@ -161,6 +163,7 @@ const searchLoader = async (
     props.sort ??
     "SALES:DESC";
   const page = props.page ?? Number(url.searchParams.get("page")) ??
+    pageOffset ??
     Number(url.searchParams.get("pagina")) ?? 0;
   const query = props.query ?? url.searchParams.get("busca");
   const operation = props.operation ?? "AND";
@@ -263,14 +266,12 @@ const searchLoader = async (
 
   const hasPreviousPage = page > 1;
 
-  const pageOffset = props.pageOffset ?? 0;
-
   if (hasNextPage) {
-    nextPage.set("page", (page + pageOffset + 1).toString());
+    nextPage.set("page", (page + 1).toString());
   }
 
   if (hasPreviousPage) {
-    previousPage.set("page", (page + pageOffset - 1).toString());
+    previousPage.set("page", (page - 1).toString());
   }
 
   const productIDs = products.map((i) => i?.productId);

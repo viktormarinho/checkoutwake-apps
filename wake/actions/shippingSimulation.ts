@@ -35,7 +35,7 @@ export const buildSimulationParams = (
     productVariantId,
     quantity,
     useSelectedAddress,
-    products
+    products,
   } = props;
 
   const defaultQueryParams = {
