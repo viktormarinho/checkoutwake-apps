@@ -151,7 +151,16 @@ const searchLoader = async (
 
   const partnerAccessTokenCookie = getPartnerCookie(req.headers);
 
-  const pageOffset = props.pageOffset ?? 0;
+  const pageOffset = props.pageOffset ?? 1;
+
+  console.log('LOG: props.page', props.page);
+
+  console.log('LOG: url.searchParams.get("page")', url.searchParams.get("page"));
+
+  console.log('LOG: Number(url.searchParams.get("page"))', Number(url.searchParams.get("page")));
+
+  console.log('LOG: TESTE:',  props.page, Number(url.searchParams.get("page")),
+  pageOffset)
 
   const headers = parseHeaders(req.headers);
 
@@ -162,11 +171,15 @@ const searchLoader = async (
     (url.searchParams.get("ordenacao") as SortValue | null) ??
     props.sort ??
     "SALES:DESC";
-  const page = props.page ?? Number(url.searchParams.get("page")) ??
+  const urlPage = url.searchParams.get("page") && Number(url.searchParams.get("page"))
+  
+  const page = props.page ?? urlPage ??
     pageOffset ??
     Number(url.searchParams.get("pagina")) ?? 0;
   const query = props.query ?? url.searchParams.get("busca");
   const operation = props.operation ?? "AND";
+
+  console.log('LOG: page', page);
 
   const [sortKey, sortDirection] = sort.split(":") as [
     ProductSortKeys,
