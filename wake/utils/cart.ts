@@ -1,6 +1,7 @@
 import { getCookies, setCookie } from "std/http/cookie.ts";
 
 export const CART_COOKIE = "carrinho-id";
+export const CLIENT_COOKIE = "customerToken";
 
 const TEN_DAYS_MS = 10 * 24 * 3600 * 1_000;
 
@@ -17,6 +18,12 @@ export const setCartCookie = (headers: Headers, cartId: string) =>
     path: "/",
     expires: new Date(Date.now() + TEN_DAYS_MS),
   });
+
+export const getClientCookie = (headers: Headers): string | undefined => {
+  const cookies = getCookies(headers);
+
+  return cookies[CLIENT_COOKIE];
+};
 
 export const setClientCookie = (value: string) => {
   let expires = "";

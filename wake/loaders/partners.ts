@@ -8,7 +8,15 @@ import {
 import { parseHeaders } from "../utils/parseHeaders.ts";
 
 export interface Props {
-  slug: RequestURLParam;
+  slug?: RequestURLParam;
+  /**
+   * @ignore
+   */
+  first?: number;
+  /**
+   * @ignore
+   */
+  alias?: string[];
 }
 
 /**
@@ -21,17 +29,22 @@ const loader = async (
   ctx: AppContext,
 ): Promise<GetPartnersQuery["partners"]> => {
   const { storefront } = ctx;
-  const { slug } = props;
+  const { slug, first, alias } = props;
 
   const headers = parseHeaders(req.headers);
+
+  const currentAlias = alias ? alias : (slug ? [slug] : []);
 
   const data = await storefront.query<
     GetPartnersQuery,
     GetPartnersQueryVariables
-  >({
-    variables: { first: 1, alias: [slug] },
-    ...GetPartners,
-  }, { headers });
+  >(
+    {
+      variables: { first: first ?? 1, alias: currentAlias },
+      ...GetPartners,
+    },
+    { headers },
+  );
 
   return data.partners ?? undefined;
 };
